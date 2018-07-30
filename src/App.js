@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
-import './App.css';
-
-import { Route, Switch, Router } from 'react-router-dom';
+import { Route, Switch, Router, Redirect } from 'react-router-dom';
 import ReduxThunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
+
+import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
+
 import history from './history';
 import Login from './containers/Login';
+import SignUp from './containers/SignUp';
+import NavBar from './hoc/NavBar';
+import Dashboard from './containers/Dashboard';
+import Barbecues from './containers/Barbecues';
+import Barbecue from './components/Barbecue';
 import reducers from './reducers';
 import axios from './axios';
+
 import {
     AUTH_USER,
     AUTH_USER_ERROR,
@@ -60,26 +68,34 @@ class App extends Component {
                   <Switch>
                     <Route path="/" exact component={Login} />
                     <Route path="/login" exact component={Login} />
-                      {/* <Route
-                          path="/app" exact={false}
+                    <Route path="/signup" exact component={SignUp} />
+                      <Route
                           component={
                               () => {
                                   if (localStorage.getItem('token')) {
                                       return (
-                                          <Layout>
-                                              <Switch>
-                                                  <Route 
-                                                      exact path="/app/dashboard" 
-                                                      component={Dashboard} 
-                                                  />
-                                              </Switch>
-                                          </Layout>
+                                        <NavBar>
+                                          <Switch>
+                                              <Route 
+                                                  exact path="/dashboard" 
+                                                  component={Dashboard} 
+                                              />
+                                              <Route 
+                                                  exact path="/barbecues" 
+                                                  component={Barbecues} 
+                                              />
+                                              <Route 
+                                                  exact path="/barbecues/new" 
+                                                  component={Barbecue} 
+                                              />
+                                          </Switch>
+                                        </NavBar>
                                       );
                                   }
                                   return <Redirect to='/login' />;
                               }
                           }
-                      /> */}
+                      />
                   </Switch>
               </Router>
             </Provider>
