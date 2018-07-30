@@ -1,0 +1,10 @@
+export const AUTH_USER = 'auth_user';
+export const AUTH_USER_SUCCESS = 'auth_user_success';
+export const AUTH_USER_ERROR = 'auth_user_error';
+export const UNAUTH_USER = 'unauth_user';
+export const RETRIEVE_USERS_SUCCESS = 'retrieve_users_success';
+export const RETRIEVE_USER_SUCCESS = 'retrieve_user_success';
+export const SET_LOADING = 'set_loading';
+export const SET_LOADING_NOTIFICATION = 'set_loading_notification';
+export const UNSET_LOADING = 'unset_loading';
+export const SET_ERROR = 'set_error';
