@@ -49,7 +49,7 @@ class Reserve extends Component {
                         this.props.barbecueReservedList.map(barbecue => {
                             return (
                                 <div key={barbecue.pivot.id} className="card mb-3">
-                                    <img className="card-img-top" src={`http://dlbarbecue.test${barbecue.image}`} style={cardImageStyle} alt="Card"/>
+                                    <img className="card-img-top" src={barbecue.image} style={cardImageStyle} alt="Card"/>
                                     <div className="card-body">
                                         <h5 className="card-title">{barbecue.name}</h5>
                                         <p className="card-text">{barbecue.description}</p>

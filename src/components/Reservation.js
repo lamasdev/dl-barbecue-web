@@ -24,8 +24,8 @@ class Reservation extends Component {
             reservedTo,
         } = this.state;
         const payload = {
-            reservedFrom: moment(reservedFrom).format('YYYY-MM-DD h:mm:ss'),
-            reservedTo: moment(reservedTo).format('YYYY-MM-DD h:mm:ss'),
+            reservedFrom: moment(reservedFrom).format('YYYY-MM-DD H:mm:ss'),
+            reservedTo: moment(reservedTo).format('YYYY-MM-DD H:mm:ss'),
             bbqId: this.props.barbecue.id,
         };
         
@@ -42,7 +42,7 @@ class Reservation extends Component {
           };
         return (
             <div className="card mb-3">
-                <img className="card-img-top" src={`http://dlbarbecue.test${barbecue.image}`} style={cardImageStyle} alt="Card"/>
+                <img className="card-img-top" src={barbecue.image} style={cardImageStyle} alt="Card"/>
                 <div className="card-body">
                     <h5 className="card-title">{barbecue.name}</h5>
                     <p className="card-text">{barbecue.description}</p>

@@ -35,7 +35,7 @@ class Barbecues extends Component {
                 model: barbecue.model,
                 latitude: barbecue.latitude,
                 longitude: barbecue.longitude,
-                imageUrl: barbecue.image !== null ? 'http://dlbarbecue.test' + barbecue.image : null,
+                imageUrl: barbecue.image !== null ? barbecue.image : null,
             });        
         } else if (match.params.id != null) {
             this.props.editBarbecue(match.params.id);
@@ -63,7 +63,7 @@ class Barbecues extends Component {
                 model: barbecue.model,
                 latitude: barbecue.latitude,
                 longitude: barbecue.longitude,
-                imageUrl: barbecue.image !== null ? 'http://dlbarbecue.test' + barbecue.image : null,
+                imageUrl: barbecue.image !== null ? barbecue.image : null,
             });
         }
     }

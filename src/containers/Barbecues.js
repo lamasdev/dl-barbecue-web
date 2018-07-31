@@ -46,7 +46,7 @@ class Barbecues extends Component {
                     {this.props.barbecueList.map(barbecue => {
                         return (
                             <div key={barbecue.id} className="card mb-3 col-sm-12 col-md-4">
-                                <img className="card-img-top" src={`http://dlbarbecue.test${barbecue.image}`} style={cardImageStyle} alt="Card"/>
+                                <img className="card-img-top" src={barbecue.image} style={cardImageStyle} alt="Card"/>
                                 <div className="card-body">
                                     <h5 className="card-title">{barbecue.name}</h5>
                                     <p className="card-text">{barbecue.description}</p>
