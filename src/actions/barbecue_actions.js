@@ -1,120 +1,206 @@
+import { toast } from 'react-toastify';
+
+
 import axios from '../axios';
 import history from '../history';
 import {
-    AUTH_USER,
-    AUTH_USER_ERROR,
-    AUTH_USER_SUCCESS,
-    UNAUTH_USER,
+    BARBECUE,
+    BARBECUE_ERROR,
+    BARBECUE_SUCCESS,
+    BARBECUES_LIST_SUCCESS,
+    BARBECUES_RESERVED_LIST_SUCCESS,
+    BARBECUES_SEARCH_LIST_SUCCESS,
 } from './types';
 
 const ROOT_URL = '/api/auth';
 
-export function signInUser(data) {
-    return function (dispatch) {
-        // Submit email/password to the server
-        dispatch({ type: AUTH_USER });
-        axios({
-            method: 'post',
-            url: `${ROOT_URL}/login`,
-            data: data,
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then((response) => {
-            const loginResponse = response.data;
-            // If request is good...
-            // - Update state to indicate user is authenticated
-            dispatch(loginUserSuccess(loginResponse.user));
-            // - Save the oauth token
-            localStorage.setItem('token', `${loginResponse.token_type} ${loginResponse.access_token}`);
-            history.push('/dashboard');
-        }).catch((error) => {
-            dispatch(loginUserFail(error.response.data.message));
-        });
-    };
-}
-
-export function signUpUser(data) {
+export function createBarbecue(data) {
     return function(dispatch) {
         axios({
             method: 'post',
-            url: `${ROOT_URL}/signup`,
+            url: `${ROOT_URL}/barbecue`,
             data: data,
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
+                Authorization: localStorage.getItem('token'),
             }
         })
         .then(response => {
-            const loginResponse = response.data;
-            dispatch({ type: AUTH_USER });
-            // - Save the oauth token
-            dispatch(loginUserSuccess(loginResponse.user));
-            localStorage.setItem('token', `${loginResponse.token_type} ${loginResponse.access_token}`);
-            history.push('/dashboard');
+            const barbecueResponse = response.data;
+            dispatch({ type: BARBECUE });
+            dispatch(barbecueSuccess(barbecueResponse.barbecue));
+            toast.success(response.data.message, {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            history.push('/barbecues');
         })
         .catch(error =>{
-            dispatch(loginUserFail(error.response.data.message));
-            dispatch({ type: AUTH_USER });
+            toast.error(error.response.data.message, {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            dispatch(barbecueFail(error.response.data.message));
         });
     }
 }
 
-export function signOutUser() {
-    return function (dispatch) {
-        dispatch({ type: UNAUTH_USER });
+export function updateBarbecue(id, data) {
+    return function(dispatch) {
         axios({
-            method: 'get',
-            url: `${ROOT_URL}/logout`,
+            method: 'post',
+            url: `${ROOT_URL}/barbecue/${id}`,
+            data: data,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: localStorage.getItem('token'),
+            }
+        })
+        .then(response => {
+            const barbecueResponse = response.data;
+            dispatch({ type: BARBECUE });
+            dispatch(barbecueSuccess(barbecueResponse.barbecue));
+            toast.success(response.data.message, {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            history.push('/barbecues');
+        })
+        .catch(error =>{
+            toast.error(error.response.data.message, {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            dispatch(barbecueFail(error.response.data.message));
+        });
+    }
+}
+
+export function reserveBarbecue(data, dataList, barbecue) {
+    return function(dispatch) {
+        axios({
+            method: 'post',
+            url: `${ROOT_URL}/reserve`,
+            data: data,
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: localStorage.getItem('token'),
             }
         })
         .then(response => {
-            const loginResponse = response.data;
-            // - Delete the oauth token
-            localStorage.removeItem('token');
-            history.push('/login');
+            const reserveBarbecueResponse = response.data
+            dispatch(barbecuesReservedListSuccess([{...barbecue, pivot:reserveBarbecueResponse.reservedBarbecue}].concat(dataList)));
+            toast.success(response.data.message, {
+                position: toast.POSITION.TOP_RIGHT
+            });
         })
-        .catch(error => dispatch(loginUserFail(error.response.data.message)));
-    };    
+        .catch(error =>{
+            toast.error(error.response.data.message, {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            dispatch(barbecueFail(error.response.data.message));
+        });
+    }
 }
 
-export function retrieveAuthUser() {
-    return function (dispatch) {
-        dispatch({ type: AUTH_USER });
+export function editBarbecue(id) {
+    return function(dispatch) {
         axios({
             method: 'get',
-            url: `${ROOT_URL}/user`,
+            url: `${ROOT_URL}/barbecue/${id}`,
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: localStorage.getItem('token'),
             }
-        }).then((response) => {
-            const userResponse = response.data.data;
-            // If request is good...
-            // - Update state to indicate the auth user
-            dispatch(loginUserSuccess(userResponse));
-        }).catch((error) => {
-            if (error !== undefined) {
-                if (error.response !== undefined) {
-                    dispatch(loginUserFail(error.response.data.message));
-                }
-            }
+        })
+        .then(response => {
+            const barbecueResponse = response.data;
+            dispatch({ type: BARBECUE });
+            dispatch(barbecueSuccess(barbecueResponse.barbecue));
+            history.push(`/barbecues/${id}`);
+        })
+        .catch(error =>{
+            dispatch(barbecueFail(error.response.data.message));
         });
+    }
+}
+
+export function barbecueSearch() {
+    return function(dispatch) {
+        axios({
+            method: 'get',
+            url: `${ROOT_URL}/barbecue`,
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: localStorage.getItem('token'),
+            }
+        })
+        .then(response => {
+            const barbecueResponse = response.data;
+            dispatch({ type: BARBECUE });
+            dispatch(barbecuesSearchListSuccess(barbecueResponse.barbecues));
+        })
+        .catch(error =>{
+            dispatch(barbecueFail(error.response.data.message));
+        });
+    }
+}
+
+export function setBarbecue(data) {
+    return function(dispatch) {
+        dispatch({ type: BARBECUE });
+        dispatch(barbecueSuccess({...data}));
+    }
+}
+
+export function deleteBarbecue(barbecues, id) {
+    return function(dispatch) {
+        axios({
+            method: 'delete',
+            url: `${ROOT_URL}/barbecue/${id}`,
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: localStorage.getItem('token'),
+            }
+        })
+        .then(response => {
+            dispatch({ type: BARBECUE });
+            dispatch(barbecuesListSuccess(barbecues.filter(barbecue => barbecue.id !== id)));
+            history.push('/barbecues');
+        })
+        .catch(error =>{
+            dispatch(barbecueFail(error.response.data.message));
+        });
+    }
+}
+
+function barbecueSuccess(barbecue) {
+    return {
+        type: BARBECUE_SUCCESS,
+        payload: barbecue
     };
 }
 
-function loginUserSuccess(user) {
+function barbecueFail(error) {
     return {
-        type: AUTH_USER_SUCCESS,
-        payload: user
-    };
-}
-
-function loginUserFail(error) {
-    return {
-        type: AUTH_USER_ERROR,
+        type: BARBECUE_ERROR,
         payload: error
+    };
+}
+
+function barbecuesListSuccess(barbecues) {
+    return {
+        type: BARBECUES_LIST_SUCCESS,
+        payload: barbecues
+    };
+}
+
+function barbecuesReservedListSuccess(barbecuesReserved) {
+    return {
+        type: BARBECUES_RESERVED_LIST_SUCCESS,
+        payload: barbecuesReserved
+    };
+}
+
+function barbecuesSearchListSuccess(barbecuesReserved) {
+    return {
+        type: BARBECUES_SEARCH_LIST_SUCCESS,
+        payload: barbecuesReserved
     };
 }

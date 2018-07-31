@@ -11,13 +11,27 @@ const MyMap = compose(
     }),
     withScriptjs,
     withGoogleMap
-  )((props) =>(
+  )((props) =>{
+    const setPosition = (event) => {
+          props.setPosition({
+            latitude: event.latLng.lat(),
+            longitude: event.latLng.lng(),
+          });
+    };
+    const onMapClick = (event) => {
+        props.setPosition({
+            latitude: event.latLng.lat(),
+            longitude: event.latLng.lng(),
+          });
+    };
+    return(
   <GoogleMap
-    defaultZoom={8}
-    defaultCenter={{ lat: -34.397, lng: 150.644 }}
+    defaultZoom={12}
+    defaultCenter={{ lat: props.latitude, lng: props.longitude }}
+    onClick={onMapClick}
   >
-    {props.isMarkerShown && <Marker position={{ lat: -34.397, lng: 150.644 }} />}
+    {props.isMarkerShown && <Marker onDragEnd={setPosition} draggable={props.isDraggable} position={{ lat: props.latitude, lng: props.longitude }} />}
   </GoogleMap>
-));
+)});
 
 export default MyMap;

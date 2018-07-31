@@ -11,16 +11,20 @@ import history from './history';
 import Login from './containers/Login';
 import SignUp from './containers/SignUp';
 import NavBar from './hoc/NavBar';
-import Dashboard from './containers/Dashboard';
+import Reserve from './containers/Reserve';
 import Barbecues from './containers/Barbecues';
 import Barbecue from './components/Barbecue';
 import reducers from './reducers';
 import axios from './axios';
 
+
 import {
     AUTH_USER,
     AUTH_USER_ERROR,
+    BARBECUE_ERROR,
     AUTH_USER_SUCCESS,
+    BARBECUES_LIST_SUCCESS,
+    BARBECUES_RESERVED_LIST_SUCCESS,
 } from './actions/types';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -46,21 +50,19 @@ if (token) {
         // If request is good...
         // - Update state to indicate the auth user
         store.dispatch({ type: AUTH_USER_SUCCESS, payload: userResponse });
+        store.dispatch({ type: BARBECUES_LIST_SUCCESS, payload: userResponse.barbecues });
+        store.dispatch({ type: BARBECUES_RESERVED_LIST_SUCCESS, payload: userResponse.reserves });
     }).catch((error) => {
         if (error !== undefined) {
             if (error.response !== undefined) {
                 store.dispatch({ type: AUTH_USER_ERROR, payload: error });
+                store.dispatch({ type: BARBECUE_ERROR, payload: error });
             }
         }
     });
 }
 
 class App extends Component {
-
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <Provider store={store}>
@@ -77,8 +79,8 @@ class App extends Component {
                                         <NavBar>
                                           <Switch>
                                               <Route 
-                                                  exact path="/dashboard" 
-                                                  component={Dashboard} 
+                                                  exact path="/reserve" 
+                                                  component={Reserve} 
                                               />
                                               <Route 
                                                   exact path="/barbecues" 
@@ -86,6 +88,10 @@ class App extends Component {
                                               />
                                               <Route 
                                                   exact path="/barbecues/new" 
+                                                  component={Barbecue} 
+                                              />
+                                              <Route 
+                                                  exact path="/barbecues/:id" 
                                                   component={Barbecue} 
                                               />
                                           </Switch>
@@ -104,4 +110,3 @@ class App extends Component {
 }
 
 export default App;
-

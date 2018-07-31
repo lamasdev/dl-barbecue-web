@@ -16,6 +16,9 @@ class Login extends Component {
 
   componentDidMount() {
     const self = this;
+    if (this.props.user !== null) {
+        history.push('/barbecues');
+    }
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
             const lastLatitude = position.coords.latitude;
@@ -26,14 +29,8 @@ class Login extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const routs = ['/', '/login', '/signup']
     if (!this.props.loading && this.props.error !== null && this.props.error !== prevProps.error) {
         this.notify(this.props.error);
-    }
-    if (!this.props.loading && this.props.user !== null && this.props.user !== prevProps.user && routs.includes(this.props.match.path)) {
-        console.log(this.props.match);
-        console.log(prevProps.match);
-        this.props.signOutUser();
     }
   }
 
